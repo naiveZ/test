@@ -1,0 +1,420 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="__CSS__/common.css" />
+    <link rel="stylesheet" type="text/css" href="__CSS__/member_public.css" />
+    <link rel="stylesheet" type="text/css" href="__CSS__/shopping_cart.css" />
+	<link rel="stylesheet" type="text/css" href="__JS__/layer/skin/default/layer.css"/>
+    <title>Shopping Cart</title>
+</head>
+<script type="text/javascript" src="__JS__/jquery-3.2.0.min.js"></script>
+<script type="text/javascript" src="__JS__/header.js"></script>
+<script type="text/javascript" src="__JS__/layer/layer.js"></script>
+<script>
+    $(function () {
+        layer.load(1);
+        console.log(23424234);
+    })
+</script>
+<body>
+<include file="Base/public_user_header"></include>
+
+
+    <div class="content">
+        <div class="content-box">
+            <div class="nav-bar">
+                <a href="__WEB_URL__" class="fl">Home</a>
+                <span class="right-icon fl"></span>
+                <a class="fl" href="javascript:void(0)">Shopping Cart</a>
+            </div>
+            <div class="goods">
+                <div class="goods-tags clearfix">
+                    <span class="goods-info fl">Goods Information</span>
+                    <span class="attrbute fl">Attrbute</span>
+					
+					
+					
+                    <span class="price fl">Price</span>
+                    <span class="quantity fl">Quantity</span>
+                    <span class="total fl">Subtotal</span>
+                    <span class="operate fl">Operate</span>
+                </div>
+                <ul>
+                    <if condition="!empty($res['user_and_price'])">
+                        <foreach name="res['user_and_price']" item="vo">
+                            <li class="clearfix">
+                                <div class="goods-info fl">
+                                    <input type="checkbox" name="select_all" value="{$vo['pivot']['id']}" onclick="inputCheck(this)" class="goods-check fl"  price-id="{$vo.id}" product-id="{$vo.price_and_product.id}"/>
+                                    <input type="hidden" value="{$vo.stock}" class="hiddenstock"/>
+                                    <php>$img_url=explode('|',$vo['price_and_product']['image_url'])</php>
+                                    <a href="__WEB_URL__/productDetail/{$vo['price_and_product']['id']}.html" class="goods-img fl">
+                                        <img src="{$img_url[0]}" alt="" title="">
+                                    </a>
+                                    <a href="__WEB_URL__/productDetail/{$vo['price_and_product']['id']}.html" class="desc fl" title="">
+                                        <span>{$vo['price_and_product']['name_1']}</span>
+                                    </a>
+                                </div>
+
+                                <div class="attrbutes fl attrbute">
+                                    <foreach name="$vo['spec_info']" item="v_spec_info">
+                                        <span>{$v_spec_info['parent_spec']}: {$v_spec_info['name_1']}</span>
+                                    </foreach>
+                                </div>
+                                <span class="unit-price fl price">${$vo.price}</span>
+                                <div class="fl numbers quantity">
+                                    <a href="javscript:void(0)" class="reduce fl" onclick="reduceNumber(this)">
+                                        <img src="__IMAGE__/minus.png" alt="minus">
+                                    </a>
+                                    <input type="text" class="number fl" value="{$vo['pivot']['number']}" onkeyup="ifNumber(this)">
+                                    <a href="javscript:void(0)" class="add fl" onclick="addNumber(this)">
+                                        <img src="__IMAGE__/add.png" alt="add">
+                                    </a>
+                                </div>
+                                <span class="total-price fl total">$<php>echo intval($vo['price']) * intval($vo['pivot']['number']);</php></span>
+                                <a href="javscript:void(0)" class="delete fl delete_single" delete-id="{$vo['pivot']['id']}" >Delete</a>
+                            </li>
+                        </foreach>
+                        <else/>
+
+                    </if>
+
+                </ul>
+
+                <div class="bottom">
+                    <div class="select-all fl">
+                        <input type="checkbox" class="all-check" onclick="allCheck(event)">
+                        <label for="" >Select All </label>
+                    </div>
+                    <a href="javscript:void(0)" class="delete-all" >Delete</a>
+                    <a href="javscript:void(0)" class="continue fr" >Continue</a>
+                    <div class="total-price fr">
+                        Price Total
+                        <span>$0.00</span>
+                    </div>
+                    <div class="selected-number fr">
+                        Selected
+                        <span>0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <include file="Base/public_small_footer"></include>
+    <!-- 删除  -->
+    <div class="toast">
+        <div class="box">
+            <!-- <div class="cancle" @click="hideToast()"></div> -->
+            <div class="member-content">
+                <div class="title">
+
+                </div>
+                <div>
+                    <a href="javascript:void(0)" class="success fl" onclick="successDelete()">Determine</a>
+                    <a href="javascript:void(0)" class="failed fr"  onclick="cancleDelete()">Cancle</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<form action="__WEB_URL__/preparePayFlow.html" target="_blank" id="formhidden" method="post" style="display:none;">
+	<textarea name="order_array">
+
+	</textarea>
+	<input type="hidden" name="user_id" value="{$user_id}" id="userId"/>
+	<input type="submit" id="formsubmit"/>
+</form>
+</body>
+<script>
+    $(function () {
+        layer.closeAll();
+        console.log(23424234);
+    })
+</script>
+<script>
+
+    $(function () {
+
+        $('.delete_single').click(function () {
+            var cart_id=$(this).attr("delete-id");
+            console.log(cart_id);
+            layer.open({
+                title: 'Delete',
+                content: 'Are you sure?',
+                btn:['conform'],
+                btn1:function (index) {
+                    layer.close(index);
+                    layer.load(1,{time:1000});
+                    $.post("{:U('Cart/delete')}",{'cart_id':cart_id},function (data) {
+                        if(data=='success'){
+                            layer.msg('operation success', {icon: 1,offset: '100px',time:'1000'});
+                            setTimeout("window.location.reload()",1000);
+                        }
+                        else{
+                            if (data == 'no_session') {
+                                layer.msg('Login information has failed please log in again ', {icon: 2, offset: '100px', time: '1000'});
+                                setTimeout("location.href = '{:U("index/Login/login")}'", 1000);
+                                return false;
+                            }
+                            layer.msg(JSON.stringify(data), {icon: 2,offset: '100px',time:'1500'});
+                            return false;
+                        }
+                    },'json');
+                }
+            });
+        });
+       $('.delete-all').click(function () {
+           var obj=$('input[name="select_all"]:checked').map(function (index,elem) {
+               return $(elem).val();
+           });
+           console.log(obj);
+           layer.load(1,{time:'1000'});
+           if(obj.length==0){
+               layer.msg('Please check the object ', {icon: 2,offset: '100px', time: '1000'});
+               return false;
+           }
+           var cart_ids = JSON.stringify(obj).split(',"length')[0]+ '}';
+           console.log(cart_ids);
+           layer.open({
+               title: 'Delete',
+               content: 'Are you sure?',
+               btn:['conform'],
+               btn1:function (index) {
+                   layer.close(index);
+                   layer.load(1,{time:1000});
+                   $.post("{:U('Cart/deleteAll')}",{'cart_ids':cart_ids},function (data) {
+                       if(data=='success'){
+                           layer.msg('operation success', {icon: 1,offset: '100px',time:'1000'});
+                           setTimeout("window.location.reload()",1000);
+                       }
+                       else{
+                           if (data == 'no_session') {
+                               layer.msg('Login information has failed please log in again ', {icon: 2, offset: '100px', time: '1000'});
+                               setTimeout("location.href = '{:U("index/Login/login")}'", 1000);
+                               return false;
+                           }
+                           layer.msg(JSON.stringify(data), {icon: 2,offset: '100px',time:'1500'});
+                           return false;
+                       }
+                   },'json');
+               }
+           });
+       });
+    })
+</script>
+<script>
+    $(function(){
+	
+	var reduceHeight;
+	//居中
+        $(".goods-info").parent("li").each(function(){
+            reduceHeight= $(this).height()-98;
+            $(this).find(".goods-info").css("margin-top",reduceHeight/2);
+        });
+		if(window.innerHeight > $(".content").height() + $(".header").height() + $(".footer").height()){
+			$(".content").height(window.innerHeight - $(".header").height() - $(".footer").height()-1);
+		}
+		$(".content").height
+		
+		$(".continue").on("click",function(){
+		
+		if(!$(this).hasClass("active")){
+			layer.load(1,{time:'1000'});
+			layer.msg('Please Check Products', {icon: 2,offset: '100px',time:'1000'});
+			console.log(3333);
+			return false;
+		}
+			console.log(4433);
+		    continueSubmit();
+			
+		})
+		
+    })
+
+
+</script>
+<script>
+var selectIndex =0;
+
+    //减少
+	function reduceNumber(e){		
+		var number = $(e).siblings("input").val();
+		var stock = $(e).parent().siblings(".goods-info").find(".hiddenstock").val();
+		console.log(stock);
+		var price = $(e).parent().siblings(".unit-price").html();
+		price = parseInt(price.substring(1));
+		console.log(price);
+		number = parseInt(number);
+		number--;
+		if(number <= 1){
+			number = 1;
+		}
+		$(e).siblings("input").val(number);
+		$(e).parent().siblings(".total-price").html("$"+number*price);
+		Calculation();
+		
+	}
+	//增加
+	function addNumber(e){
+		var number = $(e).siblings("input").val();
+		var stock = $(e).parent().siblings(".goods-info").find(".hiddenstock").val();
+		
+		var price = $(e).parent().siblings(".unit-price").html();
+		price = parseInt(price.substring(1));
+		number = parseInt(number);
+		number++;
+		if(number > stock){
+			layer.load(1,{time:'1000'});
+			layer.msg('Quantity exceeds stock', {icon: 2,offset: '100px',time:'1000'});
+			$(e).siblings("input").val(stock);
+			$(e).parent().siblings(".total-price").html("$"+stock*price);
+		}else{
+			$(e).siblings("input").val(number);
+			$(e).parent().siblings(".total-price").html("$"+number*price);
+		}
+		
+		Calculation();
+	}
+	function ifNumber(e){
+		var stock = $(e).parent().siblings(".goods-info").find(".hiddenstock").val();
+		console.log(stock);
+		
+		var quantity = $(e).val();
+		var reg = /^[0-9]*$/;
+		var price = $(e).parent().siblings(".unit-price").html();
+		price = parseInt(price.substring(1));	
+		
+		if(!quantity){
+			$(e).val(1);		
+			$(e).parent().siblings(".total-price").html("$"+1*price);
+			console.log($(e).parent().siblings(".total-price").html());
+		}else if (!reg.test(quantity)) {	
+			console.log("not a number"); 		
+			quantity = parseInt(quantity);
+			$(e).val(quantity);
+		 	console.log("not a number"); 
+			
+			
+	   }else if(quantity > stock){
+			layer.load(1,{time:'1000'});
+			layer.msg('Quantity exceeds stock', {icon: 2,offset: '100px',time:'1000'});
+			$(e).val(stock);
+			$(e).parent().siblings(".total-price").html("$"+stock*price);
+	   }else{
+			$(e).val(quantity);
+			$(e).parent().siblings(".total-price").html("$"+quantity*price);
+	   }
+ 
+	   Calculation();
+	   
+	}
+//全选和全不选
+function allCheck(e){
+	// var that = this;
+     if($(e.target).prop("checked")){
+        $(".goods-info input:checkbox").prop("checked","checked");
+        selectIndex = $(".goods-check").length;
+
+     }else {
+        $(".goods-info input:checkbox").prop("checked","");
+         selectIndex = 0;
+    }
+	$(".selected-number span").html(selectIndex);
+	openPay();
+	Calculation();
+}
+$(".select-all label").click(function(){
+	$(".all-check").click();
+})
+//单选统计个数
+function inputCheck(e){
+    //var that = this;
+     selectIndex = 0;
+    if(!$(e.target).prop("checked")){
+        $(".all-check").prop("checked","");
+    }
+    $(".goods-check").each(function() {
+	//console.log(this.checked);
+        if (this.checked == true) {
+            selectIndex++;
+        }
+    })
+	//console.log(selectIndex);
+    if(selectIndex ==  $(".goods-check").length){
+         $(".all-check").prop("checked","checked");
+        }
+    $(".selected-number span").html(selectIndex);
+	
+	openPay();
+	Calculation();
+}
+//结算样式
+function openPay(){
+    if(selectIndex > 0 ){
+        $(".continue").addClass("active");
+    }else {
+        $(".continue").removeClass("active");
+    }
+}
+
+
+//计算总价
+function Calculation(){
+	var selectedBox = $(".goods-check");
+	var allPrice = 0;
+	var singlePrice;
+	//console.log(selectedBox);
+	$(".goods-check").each(function() {
+	//console.log(this.checked);
+        if (this.checked == true) {
+           singlePrice = $(this).parent().siblings(".total-price").html();
+		   singlePrice = parseInt(singlePrice.substring(1));
+		   allPrice+=singlePrice;
+        }
+    })
+	$(".total-price span").html("$"+allPrice);
+}
+
+	
+		
+	function continueSubmit(){
+	
+		var formArr = [];
+		var userId = $("#userId").attr("user-id");
+		 
+		var priceId = $('.goods-info input[name="select_all"]:checked').map(function(){
+			return $(this).attr("price-id");
+		}).get();
+		var productId = $('.goods-info input[name="select_all"]:checked').map(function(){
+			return $(this).attr("product-id");
+		}).get();
+		
+		var numberPrice = $('.goods-info input[name="select_all"]:checked').map(function(){
+			return $(this).parent().siblings(".quantity").find(".number").val();
+		}).get();
+				
+		console.log(priceId);
+		console.log(productId);
+		console.log(numberPrice);
+		
+		for(var i = 0;i < priceId.length;i++){
+			formArr.push({"product_price_id":priceId[i],"product_id":productId[i],"number":numberPrice[i]});
+		}
+		
+		formArr=JSON.stringify(formArr);
+		console.log(formArr);
+		$("#formhidden textarea").val(formArr);
+		console.log(formArr);
+		
+		console.log($("#formsubmit"));
+		layer.load(1,{time:500});
+		var timer = setTimeout('document.getElementById("formhidden").submit()',500);
+	}
+
+
+</script>
+
+
+</html>
