@@ -1,0 +1,628 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="__CSS__/common.css" />
+    <link rel="stylesheet" type="text/css" href="__CSS__/member_public.css" />
+    <link rel="stylesheet" type="text/css" href="__CSS__/shopping_flow.css" />
+	<link rel="stylesheet" type="text/css" href="__JS__/layer/skin/default/layer.css"/>
+    <title>Shopping Flow</title>
+</head>
+<body>
+<include file="Base/public_user_header"></include>
+<div class="content">
+    <div class="content-box">
+        <div class="nav-bar">
+            <a href="__WEB_URL__" class="fl">Home</a>
+            <span class="right-icon fl"></span>
+            <a class="fl" href="javascript:void(0)">Shopping flow</a>
+        </div>
+        <div class="shopping-address ">
+            <h3>Select the shipping address.</h3>
+            <a href="javascript:void(0)" class="show-all">Show All</a>
+            <div class="addresses">
+                <a href="javascript:;" class="add-address fl" ></a>
+                <!--__WEB_URL__/userAddressAdd.html-->
+                <div class="fl show-address-box">
+                    <foreach name="address_info['user_and_user_address']" item="v_user_address">
+                        <div class="show-address fl">
+                            <a href="javscript:void(0)" class="fl">
+                                <p><span class="name">{$v_user_address.consignee}</span>,{$v_user_address.phone}<span class="tel"></span></p>
+                                <p class="detail-address detail-address-select">{$v_user_address.country}/{$v_user_address.province}/{$v_user_address.city}</p>
+                                <p class="detail-address detail-address-write">{$v_user_address.detail}</p>
+                                <p class="links">
+                                    <a href="javascript:;" class="edit-address" ajax-id="{$v_user_address.id}">Edit</a>
+                                </p>
+                                <!--__WEB_URL__/userAddressEdit/{$v_user_address.id}.html-->
+                                <div class="selected">
+                                    <div class="ok"></div>
+                                </div>
+                            </a>
+                        </div>
+                    </foreach>
+                </div>
+            </div>
+        </div>
+        <div class="pay-method">
+            <h3>Payment Method</h3>
+            <ul class="pay-methods">
+                <li class="fl online-pay" data-id = "1">
+                    <a href="javascript:void(0)">Online Payment</a>
+                    <div class="selected">
+                        <div class="ok"></div>
+                    </div>
+                </li>
+                <li class="fl cash-pay" data-id = "2">
+                    <a href="javascript:void(0)">Cash on Delivery</a>
+                    <div class="selected">
+                        <div class="ok"></div>
+                    </div>
+                </li>
+            </ul>
+            <ul class="online-methods">
+                <li class="yinlian fl " data-id = "11">
+                    <a href="javascript:void(0)"></a>
+                    <div class="selected">
+                        <div class="ok"></div>
+                    </div>
+                </li>
+                <li class="visa fl" data-id = "12">
+                    <a href="javascript:void(0)"></a>
+                    <div class="selected">
+                        <div class="ok"></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="goods-info">
+            <h3>Goods Infomation</h3>
+            <div class="infos">
+                <php>$pay_price=$res['pay_price'];</php>
+                <php>unset($res['pay_price']);</php>
+                <foreach name="res" item="vo">
+                    <div class="info-dec">
+                        <span class="name">{$vo.price_and_product.name_1}</span>
+                        <span class="attrbutes">
+                            <foreach name="vo['spec_info']" item="v_spec_info">
+                                {$v_spec_info.parent_spec}:{$v_spec_info.name_1}
+                            </foreach>
+                        </span>
+                        <span class="number" product-id="{$vo.product_id}" price-id="{$vo.id}" number-no="{$vo.total_number}">Quantity <span>{$vo.total_number}</span></span>
+                        <span class="price">Price <span>${$vo.total_price}</span></span>
+                    </div>
+                </foreach>
+            </div>
+        </div>
+        <div class="submit">
+            <a href="javscript:void(0)" class="continue fr">Submit</a>
+            <div class="total-price fr">
+                Price Total
+                <span>${$pay_price}</span>
+            </div>
+            <!--<div class="selected-number fr">-->
+                <!--Total-->
+                <!--<span><php>echo count($res);</php></span>-->
+            <!--</div>-->
+        </div>
+    </div>
+</div>
+<include file="Base/public_small_footer"></include>
+<!-- 添加地址弹出框 -->
+<div class="toast add-toast">
+    <div class="toast-box">
+        <div class="cancle"></div>
+        <div class="member-content">
+            <div class="title">
+                Add New Address
+            </div>
+            <dl class="clearfix">
+                <dt>Consignee :</dt>
+                <dd><input type="text" value="" id="consignee"/></dd>
+            </dl>
+            <dl class="clearfix">
+                <dt>Phone Number :</dt>
+                <dd><input type="text" value="" id="phone"/></dd>
+            </dl>
+            <dl class="clearfix">
+                <dt>Area :</dt>
+                <dd style="float:left;margin-left:12px;">
+                    <select name="" id="select_country">
+                        <option value="">country</option>
+                        <foreach name="country_info" item="v_country_info">
+                            <option value="{$v_country_info.id}">{$v_country_info.name_2}</option>
+                        </foreach>
+
+                    </select>
+                    <select name="" id="select_province">
+                        <option value="">province</option>
+
+                    </select>
+                    <select name="" id="select_city">
+                        <option value="">city</option>
+                        <i></i>
+                    </select>
+                </dd>
+            </dl>
+            <dl class="clearfix">
+                <dt>Detail Address :</dt>
+                <dd>
+                    <textarea name="" rows="" cols="" id="address_detail"></textarea>
+                </dd>
+            </dl>
+            <input type="button" name="" id="address_submit" class="submit" value="Submit" />
+        </div>
+    </div>
+</div>
+<!--编辑地址弹出框-->
+<div class="toast edit-toast">
+    <div class="toast-box">
+        <div class="cancle"></div>
+        <div class="member-content">
+            <div class="title">
+                Edit New Address
+            </div>
+            <dl class="clearfix">
+                <dt>Consignee :</dt>
+                <dd><input type="text" value="edgar yu" id="consignee_edit"/></dd>
+            </dl>
+            <dl class="clearfix">
+                <dt>Phone Number :</dt>
+                <dd><input type="text" value="138000000" id="phone_edit"/></dd>
+            </dl>
+            <dl class="clearfix">
+                <dt>Area :</dt>
+                <dd style="float:left;margin-left:12px;">
+                    <select name="" id="select_country_edit">
+                        <option value="">country</option>
+
+                    </select>
+                    <select name="" id="select_province_edit">
+                        <option value="">province</option>
+
+                    </select>
+                    <select name="" id="select_city_edit">
+                        <option value="">city</option>
+                        <i></i>
+                    </select>
+                </dd>
+            </dl>
+            <dl class="clearfix">
+                <dt>Detail Address :</dt>
+                <dd>
+                    <textarea name="" rows="" cols="" id="address_detail_edit">tongxiangshi  fa zhan dandao 288#</textarea>
+                </dd>
+            </dl>
+            <input type="button" name="" id="address_edit" class="submit" value="Submit" />
+        </div>
+    </div>
+</div>
+
+<form method="post" action="__WEB_URL__/index/Order/createOrder.html" id="formPost" style="display:none;">
+    <input type="hidden" value="{$user_id}" name="user_id">
+    <input type="hidden" value="1" name="address_id">
+    <input type="hidden" value="1" name="pay_method_id">
+    <textarea name="order_array"></textarea>
+</form>
+
+<!-- 删除/支付弹出框  -->
+<div class="toast delete-toast pay-toast">
+    <div class="box">
+        <div class="cancle"></div>
+        <div class="member-content">
+            <!-- <div class="title">
+                Are you sure delete it ?
+            </div>
+            <div>
+                <a href="javascript:void(0)" class="success fl">Success</a>
+                <a href="javascript:void(0)" class="failed fr">Failed</a>
+            </div> -->
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="__JS__/jquery-3.2.0.min.js"></script>
+<script type="text/javascript" src="__JS__/header.js"></script>
+<script type="text/javascript" src="__JS__/layer/layer.js"></script>
+<script>
+	
+</script>
+<script>
+    // 支付之后的弹出框
+    var address_id_submit;
+    var pay_method_id;
+    //删除弹出框
+    $(document).on('click','.delete-address',function(e){
+        e.stopPropagation();
+        $(".delete-toast").css('display', 'block');
+        var html = '<div class="title"> Are you sure delete it ?</div><div><a href="javascript:void(0)" class="success fl">Determine</a><a href="javascript:void(0)" class="failed fr">Cancle</a></div>';
+        $(".box .member-content").html(html);
+    })
+    //编辑地址弹出框
+    $(document).on('click','.edit-address',function(e){
+        e.stopPropagation();
+        $(".edit-toast").css('display', 'block');
+        $(".box .add-address").html("paying");
+		console.log("编辑地址")
+    })
+    //添加地址弹出框
+    $(document).on('click','.add-address',function(){
+	console.log(111);
+        $(".add-toast").css('display', 'block');
+        $(".box .add-address").html("paying");
+    })
+    //取消按钮，弹出框消失
+    $(document).on('click','.cancle',function(){
+        $(".toast").css('display', 'none');
+    })
+    //显示全部地址
+    $(document).on('click','.show-all',function(){
+        $(".show-address-box").css("height","auto");
+    })
+    //选中默认地址
+    $(document).on('click','.show-address',function(){
+		$(this).addClass("active").siblings().removeClass("active");
+        $(this).find(".selected").css("display","block").end().siblings().find(".selected").css("display","none");
+        $(this).find(".delete-address").css("display","none").end().siblings().find(".delete-address").css("display","inline-block");
+		address_id_submit = $(this).find(".edit-address").attr("ajax-id");
+	})
+    //选择支付方式
+    $(document).on('click','.pay-method li',function(){
+        $(this).find(".selected").css("display","block").end().siblings().find(".selected").css("display","none");
+        $(this).addClass('active').siblings().removeClass('active');
+        pay_method_id = $(".pay-method .active").attr("data-id");
+		if($(".online-pay").hasClass('active')){
+            $(".online-methods").css("display","block");
+        }else {
+            $(".online-methods").css("display","none");
+        }
+    })
+	
+	//提交
+	$(document).on("click",".continue",function(){
+		if(!$(".show-address").hasClass("active")){
+			layer.load(1,{time:'1000'});
+			layer.msg('Please Check Address', {icon: 2,offset: '100px',time:'1000'});
+			return false;
+		}
+		if(!$(".pay-methods li").hasClass("active")){
+			layer.load(1,{time:'1000'});
+			layer.msg('Please Check Payment Method', {icon: 2,offset: '100px',time:'1000'});
+			return false;
+		}
+		    continueSubmit();
+			
+	})
+	function continueSubmit(){
+	var user_id = $("input[name='user_id']").val();	
+	$("input[name='address_id']").val(address_id_submit);
+	$("input[name='pay_method_id']").val(pay_method_id);
+
+	var formArr = [];
+		//console.log(user_id);
+		//console.log(address_id);
+		//console.log(pay_method_id);
+		
+		var productId = $('.info-dec .number').map(function(){
+			return $(this).attr("price-id");
+		}).get();
+		var productPriceId = $('.info-dec .number').map(function(){
+			return $(this).attr("product-id");
+		}).get();
+		
+		var numberPrice = $('.info-dec .number').map(function(){
+			return $(this).attr("number-no");
+		}).get();
+		
+		//console.log(productId);
+		//console.log(productPriceId);
+		//console.log(numberPrice);
+		for(var i = 0;i < productId.length;i++){
+			formArr.push({"product_price_id":productId[i],"product_id":productPriceId[i],"number":numberPrice[i]});
+		}
+		
+		formArr=JSON.stringify(formArr);
+		//console.log(formArr);
+		$("#formPost textarea").val(formArr);
+		//console.log(formArr);
+		layer.load(1,{time:500});
+		setTimeout('document.getElementById("formPost").submit()',500);
+	}
+	
+	
+	//<input type="hidden" value="{$user_id}" name="user_id">
+    //<input type="hidden" value="1" name="address_id">
+    //<input type="hidden" value="1" name="pay_method_id">
+    //<textarea name="order_array"></textarea>
+</script>
+<script>
+    var id_country = null;
+	
+	//添加状态下获取国家省份
+    $(function () {
+        $('#select_country').change(function(){
+            //$("#select_city").show();
+            $("#select_province").html('<option value="">province</option>');
+            $("#select_city").html('<option value="">city</option>');
+            var country_id=$('#select_country ').val();
+            if(!country_id){
+                layer.msg('Please check a Country', {icon: 2,offset: '100px',time:'1200'});
+                return false;
+            }
+            id_country = country_id;
+            $.post("{:U('User/getProvince')}",{'id':country_id},function (data) {
+                //console.log(data);
+
+
+                var province_option = "";
+                for( var i = 0; i < data['country_and_province'].length; i++){
+                    province_option += "<option value='"+data['country_and_province'][i]['code']+"'>"+ data['country_and_province'][i]['en_name'] +"</option>";
+                }
+                $("#select_province").append(province_option);
+            },'json');
+        });
+
+        $('#select_province').change(function(){
+            $("#select_city").html('<option value="">city</option>');
+            //$("#select_city").show();
+            var province_id=$('#select_province').val();
+            //console.log(province_id);
+            if(!province_id && !id_country){
+                layer.msg('Please check a Country', {icon: 2,offset: '100px',time:'1200'});
+                return false;
+            }
+            $.post("{:U('User/getCity')}",{'id':province_id},function (data) {
+                console.log(data);
+                if(data['province_and_city'].length != 0){
+                    $("#select_city").show();
+
+                }else{
+                    $("#select_city").hide();
+                }
+                var city_option = "";
+                for( var i = 0; i < data['province_and_city'].length; i++){
+                    city_option += "<option value='"+data['province_and_city'][i]['code']+"'>"+ data['province_and_city'][i]['en_name'] +"</option>";
+                }
+                $("#select_city").append(city_option);
+            },'json');
+
+        });
+        $('.address_delete').click(function () {
+            var address_id=$(this).attr('ajax-id');
+            layer.open({
+                title: 'Delete address',
+                content: 'Are you sure?',
+                btn:['conform'],
+                btn1:function (index) {
+                    layer.close(index);
+                    layer.load(1,{time:1000});
+                    $.post("{:U('User/deleteAddressByAddressId')}",{'id':address_id},function (data) {
+                        if(data=='success'){
+                            layer.msg('operation success', {icon: 1,offset: '100px',time:'1000'});
+                            setTimeout("window.location.reload()",1000);
+                        }
+                        else{
+                            if (data == 'no_session') {
+                                layer.msg('Login information has failed please log in again ', {icon: 2, offset: '100px', time: '1000'});
+                                setTimeout("location.href = '{:U("index/Login/login")}'", 1000);
+                                return false;
+                            }
+                            layer.msg(JSON.stringify(data), {icon: 2,offset: '100px',time:'1500'});
+                            return false;
+                        }
+                    },'json');
+                }
+            });
+        });
+    })
+</script>
+<script>
+    //地址添加提交
+    $(function () {
+        $('#address_submit').click(function () {
+            layer.load(1,{time:1000});
+            var select_country=$('#select_country option:selected').text();
+            var select_province=$('#select_province option:selected').text();
+            var select_city=$('#select_city option:selected').text();
+            var consignee=$('#consignee').val();
+            var phone=$('#phone').val();
+            var address_detail=$('#address_detail').val();
+            if(!select_country || !select_province || !consignee || !phone || !address_detail){
+                layer.msg('Please complete the receipt information', {icon: 2,offset: '100px',time:'1200'});
+            }
+            // console.log(select_country);
+            // console.log(select_province);
+            // console.log(select_city);
+            // console.log(consignee);
+            // console.log(phone);
+            // console.log(address_detail);
+            $.post("{:U('User/addAddress')}",{
+                'select_country':select_country,
+                'select_province':select_province,
+                'select_city':select_city,
+                'consignee':consignee,
+                'phone':phone,
+                'address_detail':address_detail,
+            },function (data) {
+                if(data=='success'){
+                    layer.msg('operation success', {icon: 1,offset: '100px',time:'1000'});
+                    setTimeout("window.location.reload()",1000);
+                }
+                else{
+                    if (data == 'no_session') {
+                        layer.msg('Login information has failed please log in again ', {icon: 2, offset: '100px', time: '1000'});
+                        setTimeout("location.href = '{:U("index/Login/login")}'", 1000);
+                        return false;
+                    }
+                    layer.msg(JSON.stringify(data), {icon: 2,offset: '100px',time:'1500'});
+                    return false;
+                }
+            },'json');
+        });
+    })
+</script>
+
+<script>
+
+var id_country = null;
+var address_id;
+    // 获取地址编辑的信息
+    $(function () {
+        $('.edit-address').click(function () {
+		console.log($("#select_city_edit").css("display"));
+            address_id=$(this).attr('ajax-id');
+
+            $.post("{:U('User/ajaxAddressEdit')}",{'id':address_id},function (data) {
+                //console.log(data);
+				$("#consignee_edit").val(data['consignee']);
+				$("#phone_edit").val(data['phone']);
+				$("#address_detail_edit").val(data['detail']);
+				var countryList = "";
+				var provinceList = "";
+				var cityList = "";
+				
+				for(var i = 0;i < data['all_country'].length;i++){
+					if(data['all_country'][i]['name_2'] == data['country']){
+						//console.log(data['all_country'][i]['name_2']);
+						countryList += "<option value='"+data['all_country'][i]['id']+"' selected>"+data['all_country'][i]['name_2']+"</option>"	
+					}else{
+						countryList += "<option value='"+data['all_country'][i]['id']+"'>"+data['all_country'][i]['name_2']+"</option>"
+					}
+				}
+				for(var j = 0;j < data['country_province']['country_and_province'].length;j++){
+					if(data['country_province']['country_and_province'][j]['en_name'] == data['province']){
+						//console.log(data['country_province']['country_and_province'][j]['en_name']);	
+						provinceList += "<option value='"+data['country_province']['country_and_province'][j]['code']+"' selected>"+data['country_province']['country_and_province'][j]['en_name']+"</option>"
+					}else{
+						provinceList += "<option value='"+data['country_province']['country_and_province'][j]['code']+"'>"+data['country_province']['country_and_province'][j]['en_name']+"</option>"
+					}
+				}
+				for(var k = 0;k < data['province_city']['province_and_city'].length;k++){
+					if(data['province_city']['province_and_city'][k]['en_name'] == data['city']){
+						//console.log(data['province_city']['province_and_city'][k]['en_name']);
+						cityList += "<option value='"+data['province_city']['province_and_city'][k]['code']+"' selected>"+data['province_city']['province_and_city'][k]['en_name']+"</option>"	
+					}else{
+						cityList += "<option value='"+data['province_city']['province_and_city'][k]['code']+"'>"+data['province_city']['province_and_city'][k]['en_name']+"</option>"
+					}
+				}
+				
+				$("#select_country_edit").html(countryList);				
+				$("#select_province_edit").html(provinceList);
+				$("#select_city_edit").html(cityList);
+				
+				//city为null
+				
+				if(!data['city_id']){
+				//console.log(data['city_id']);
+					$("#select_city_edit").hide();
+				}else{
+					$("#select_city_edit").show();
+				}
+				
+				
+				
+            },'json');
+        });
+		
+		//编辑状态下获取国家省份
+		$('#select_country_edit').change(function(){
+            $("#select_province_edit").html('<option value="">province</option>');
+            $("#select_city_edit").html('<option value="">city</option>');
+            var country_id=$('#select_country_edit').val();
+            if(!country_id){
+                layer.msg('Please check a Country', {icon: 2,offset: '100px',time:'1200'});
+                return false;
+            }
+            id_country = country_id;
+            $.post("{:U('User/getProvince')}",{'id':country_id},function (data) {
+                console.log(data);
+				
+                var province_option = "";
+                for( var i = 0; i < data['country_and_province'].length; i++){
+                    province_option += "<option value='"+data['country_and_province'][i]['code']+"'>"+ data['country_and_province'][i]['en_name'] +"</option>";
+                }
+                $("#select_province_edit").append(province_option);
+            },'json');
+        });
+
+        $('#select_province_edit').change(function(){
+            $("#select_city_edit").html('<option value="">city</option>');
+            var province_id=$('#select_province_edit').val();
+            console.log(province_id);
+            if(!province_id && !id_country){
+                layer.msg('Please check a Country', {icon: 2,offset: '100px',time:'1200'});
+                return false;
+            }
+            $.post("{:U('User/getCity')}",{'id':province_id},function (data) {
+                console.log(data);
+                 if(data['province_and_city'].length != 0){
+					$("#select_city_edit").show();
+                   
+				}else{
+					$("#select_city_edit").hide();
+				}
+                var city_option = "";
+                for( var i = 0; i < data['province_and_city'].length; i++){
+                    city_option += "<option value='"+data['province_and_city'][i]['code']+"'>"+ data['province_and_city'][i]['en_name'] +"</option>";
+                }
+                $("#select_city_edit").append(city_option);
+            },'json');
+
+        });
+		
+		
+		
+    })
+</script>
+<script>
+    //地址编辑提交
+    $(function () {
+        $('#address_edit').click(function () {
+            layer.load(1,{time:1000});
+            var select_country=$('#select_country_edit option:selected').text();
+            var select_province=$('#select_province_edit option:selected').text();
+            var select_city=$('#select_city_edit option:selected').text();
+            var consignee=$('#consignee_edit').val();
+            var phone=$('#phone_edit').val();
+            var address_detail=$('#address_detail_edit').val();
+            console.log(address_id);
+           // var address_id=$('#address_id').val();
+            console.log(select_country);
+            console.log(select_province);
+            console.log(select_city);
+            console.log(consignee);
+            console.log(phone);
+            console.log(address_detail);
+            console.log(address_id);
+            if(!select_country || !select_province || !consignee || !phone || !address_detail){
+                layer.msg('Please complete the receipt information', {icon: 2,offset: '100px',time:'1200'});
+                return false;
+            }
+
+            $.post("{:U('User/updateAddress')}",{
+                'select_country':select_country,
+                'select_province':select_province,
+                'select_city':select_city,
+                'consignee':consignee,
+                'phone':phone,
+                'address_detail':address_detail,
+                'id':address_id,
+            },function (data) {
+                if(data=='success'){
+                    layer.msg('operation success', {icon: 1,offset: '100px',time:'1000'});
+                    setTimeout("window.location.reload()",1000);
+                }
+                else{
+                    if (data == 'no_session') {
+                        layer.msg('Login information has failed please log in again ', {icon: 2, offset: '100px', time: '1000'});
+                        setTimeout("location.href = '{:U("index/Login/login")}'", 1000);
+                        return false;
+                    }
+                    layer.msg(JSON.stringify(data), {icon: 2,offset: '100px',time:'1500'});
+                    return false;
+                }
+            },'json');
+        });
+    })
+</script>
+</html>
